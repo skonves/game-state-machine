@@ -20,72 +20,34 @@ interface GameState {
 }
 
 const hasThreeInARow: ICondition<GameState> = (state) => {
+  const [a, b, c, d, e, f, g, h, i] = state.squares;
+
   // top row
-  if (
-    state.squares[0] !== undefined &&
-    state.squares[0] === state.squares[1] &&
-    state.squares[1] === state.squares[2]
-  )
-    return true;
+  if (a && a === b && b === c) return true;
 
   // middle row
-  if (
-    state.squares[3] !== undefined &&
-    state.squares[3] === state.squares[4] &&
-    state.squares[4] === state.squares[5]
-  )
-    return true;
+  if (d && d === e && e === f) return true;
 
   // bottom row
-  if (
-    state.squares[6] !== undefined &&
-    state.squares[6] === state.squares[7] &&
-    state.squares[7] === state.squares[8]
-  )
-    return true;
+  if (g && g === h && h === i) return true;
 
   // left column
-  if (
-    state.squares[0] !== undefined &&
-    state.squares[0] === state.squares[3] &&
-    state.squares[3] === state.squares[6]
-  )
-    return true;
+  if (a && a === d && d === g) return true;
 
   // middle column
-  if (
-    state.squares[1] !== undefined &&
-    state.squares[1] === state.squares[4] &&
-    state.squares[4] === state.squares[7]
-  )
-    return true;
+  if (b && b === e && e === h) return true;
 
   // right column
-  if (
-    state.squares[2] !== undefined &&
-    state.squares[2] === state.squares[5] &&
-    state.squares[5] === state.squares[8]
-  )
-    return true;
+  if (c && c === f && f === i) return true;
 
   // diag from top left
-  if (
-    state.squares[0] !== undefined &&
-    state.squares[0] === state.squares[4] &&
-    state.squares[4] === state.squares[8]
-  )
-    return true;
+  if (a && a === e && e === i) return true;
 
   // diag from top right
-  if (
-    state.squares[2] !== undefined &&
-    state.squares[2] === state.squares[4] &&
-    state.squares[4] === state.squares[6]
-  )
-    return true;
+  if (c && c === e && e === g) return true;
 
   // cat
-  if (state.squares.every((s) => s !== undefined)) return true;
+  if (state.squares.every((x) => !!x)) return true;
 
   return false;
 };
