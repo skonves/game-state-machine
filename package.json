@@ -1,6 +1,6 @@
 {
   "name": "game-state-machine",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "State machine for building games",
   "main": "./lib/index.js",
   "scripts": {
