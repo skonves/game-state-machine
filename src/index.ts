@@ -1,4 +1,4 @@
-import { game } from './tic-tac-toe';
+import { game } from './examples/tic-tac-toe';
 
 game.on('state', () => console.log(game.state));
 
