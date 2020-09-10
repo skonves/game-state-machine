@@ -70,7 +70,9 @@ export function create<TState>(
     effects,
   );
 
-  return Object.assign(rule, effectContinuation);
+  const then = effectContinuation.then.bind(effectContinuation);
+
+  return Object.assign(rule, { then });
 }
 
 export function createScoped<TState, TScope>(
@@ -101,5 +103,7 @@ export function createScoped<TState, TScope>(
     selector,
   );
 
-  return Object.assign(rule, effectContinuation);
+  const then = effectContinuation.then.bind(effectContinuation);
+
+  return Object.assign(rule, { then });
 }
