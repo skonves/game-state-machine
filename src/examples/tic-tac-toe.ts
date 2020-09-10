@@ -1,55 +1,31 @@
 import { Game } from '../engine';
 import { IEffect, ICondition, IRule } from '../types';
-import { always } from '../builder';
+import { always, either } from '../builder';
 
 type Marker = 'X' | 'O';
 
 interface GameState {
-  playerTurn: Marker;
-  squares: [
-    Marker | undefined,
-    Marker | undefined,
-    Marker | undefined,
-    Marker | undefined,
-    Marker | undefined,
-    Marker | undefined,
-    Marker | undefined,
-    Marker | undefined,
-    Marker | undefined,
-  ];
+  currentPlayer: Marker;
+  squares: (Marker | undefined)[];
 }
 
-const hasThreeInARow: ICondition<GameState> = (state) => {
+const aPlayerHasThreeInARow: ICondition<GameState> = (state) => {
   const [a, b, c, d, e, f, g, h, i] = state.squares;
 
-  // top row
-  if (a && a === b && b === c) return true;
-
-  // middle row
-  if (d && d === e && e === f) return true;
-
-  // bottom row
-  if (g && g === h && h === i) return true;
-
-  // left column
-  if (a && a === d && d === g) return true;
-
-  // middle column
-  if (b && b === e && e === h) return true;
-
-  // right column
-  if (c && c === f && f === i) return true;
-
-  // diag from top left
-  if (a && a === e && e === i) return true;
-
-  // diag from top right
-  if (c && c === e && e === g) return true;
-
-  // cat
-  if (state.squares.every((x) => !!x)) return true;
+  if (a && a === b && b === c) return true; // top row
+  if (d && d === e && e === f) return true; // middle row
+  if (g && g === h && h === i) return true; // bottom row
+  if (a && a === d && d === g) return true; // left column
+  if (b && b === e && e === h) return true; // middle column
+  if (c && c === f && f === i) return true; // right column
+  if (a && a === e && e === i) return true; // diag from top left
+  if (c && c === e && e === g) return true; // diag from top right
 
   return false;
+};
+
+const allSquaresAreFilled: ICondition<GameState> = (state) => {
+  return state.squares.every((x) => !!x);
 };
 
 const markASquareWithTheCurrentPlayer: IEffect<GameState> = (state) => {
@@ -59,7 +35,7 @@ const markASquareWithTheCurrentPlayer: IEffect<GameState> = (state) => {
         ...state,
         squares: [...state.squares],
       };
-      newState.squares[i] = state.playerTurn;
+      newState.squares[i] = state.currentPlayer;
 
       return Promise.resolve(newState);
     }
@@ -67,8 +43,8 @@ const markASquareWithTheCurrentPlayer: IEffect<GameState> = (state) => {
   return Promise.resolve(state);
 };
 
-const itsTheNextPlayersTurn: IEffect<GameState> = (state) => {
-  const nextPlayer = state.playerTurn === 'X' ? 'O' : 'X';
+const playContinuesToTheNextPlayer: IEffect<GameState> = (state) => {
+  const nextPlayer = state.currentPlayer === 'X' ? 'O' : 'X';
 
   return Promise.resolve({
     ...state,
@@ -76,21 +52,13 @@ const itsTheNextPlayersTurn: IEffect<GameState> = (state) => {
   });
 };
 
-export const game = new Game<GameState>(
-  {
-    playerTurn: 'X',
-    squares: [
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-    ],
-  },
-  hasThreeInARow,
-  [always(markASquareWithTheCurrentPlayer).then(itsTheNextPlayersTurn)],
-);
+const initialState: GameState = {
+  currentPlayer: 'X',
+  squares: new Array(9).fill(undefined),
+};
+const objective = either(aPlayerHasThreeInARow, allSquaresAreFilled);
+const rules = [
+  always(markASquareWithTheCurrentPlayer).then(playContinuesToTheNextPlayer),
+];
+
+export const game = new Game(initialState, objective, rules);
