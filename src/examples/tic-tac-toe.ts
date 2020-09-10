@@ -1,6 +1,6 @@
-import { Game } from './engine';
-import { IEffect, ICondition, IRule } from './types';
-import { always } from './builder';
+import { Game } from '../engine';
+import { IEffect, ICondition, IRule } from '../types';
+import { always } from '../builder';
 
 type Marker = 'X' | 'O';
 
