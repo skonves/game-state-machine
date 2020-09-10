@@ -1,5 +1,5 @@
 import { Game } from './engine';
-import { IEffect, IRule, ICondition } from './types';
+import { IEffect, ICondition, IRule } from './types';
 import { always } from './builder';
 
 type Marker = 'X' | 'O';
@@ -80,7 +80,7 @@ const hasThreeInARow: ICondition<GameState> = (state) => {
   if (
     state.squares[2] !== undefined &&
     state.squares[2] === state.squares[4] &&
-    state.squares[4] === state.squares[5]
+    state.squares[4] === state.squares[6]
   )
     return true;
 
